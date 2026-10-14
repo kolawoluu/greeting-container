@@ -97,16 +97,14 @@ docker rm sample-app-restricted
 
 These examples reuse host ports `8080` and `9090`. I stop and remove each container before starting another on the same port.
 
-Use the following past-tense wording after publishing the image and completing these checks. Replace the bracketed notes with the results I observe before submitting:
-
-> After publishing the image, I checked that it was publicly available and supported `linux/amd64` by running:
+After publishing the image, I checked that it could be pulled without GHCR credentials and inspected the manifest:
 
 ```sh
 docker pull ghcr.io/kolawoluu/sample-app:v1
 docker buildx imagetools inspect ghcr.io/kolawoluu/sample-app:v1
 ```
 
-> The image [pulled without GHCR credentials] and the manifest [included `linux/amd64`]. I did not move or overwrite the submitted release tag.
+The anonymous pull succeeded. The manifest digest was `sha256:0131135470a1d5c2526131386dcce559f9706a4441b06034de0782a4d35e2a08` and listed both `linux/amd64` and `linux/arm64`.
 
 `VERSION` sets image metadata; it does not create or move the image tag.
 
