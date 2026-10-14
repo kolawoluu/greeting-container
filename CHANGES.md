@@ -97,18 +97,26 @@ docker rm sample-app-restricted
 
 These examples reuse host ports `8080` and `9090`. I stop and remove each container before starting another on the same port.
 
-After I publish the image, I will check the registry tag and platform. `VERSION` sets image metadata; it does not create or move the image tag.
+Use the following past-tense wording after publishing the image and completing these checks. Replace the bracketed notes with the results I observe before submitting:
+
+> After publishing the image, I checked that it was publicly available and supported `linux/amd64` by running:
 
 ```sh
 docker pull ghcr.io/kolawoluu/sample-app:v1
 docker buildx imagetools inspect ghcr.io/kolawoluu/sample-app:v1
 ```
 
-I will confirm that the package is public by pulling without GHCR credentials and that the manifest includes `linux/amd64`. I will not move or overwrite a submitted release tag.
+> The image [pulled without GHCR credentials] and the manifest [included `linux/amd64`]. I did not move or overwrite the submitted release tag.
+
+`VERSION` sets image metadata; it does not create or move the image tag.
+
+## Continuous integration
+
+The GitHub Actions workflow runs on pull requests and pushes to `main`. It lints the Dockerfile and Markdown, scans the repository with Proofctl, builds and scans both the `linux/amd64` and `linux/arm64` images with Trivy, and smoke-tests both images with a read-only root filesystem and all capabilities dropped. HIGH Trivy findings are reported; CRITICAL findings fail the workflow. It does not publish the image.
 
 ## What I left out
 
 -   **A transitive lock file and hash-checked install:** I left `app/requirements.txt` unchanged as requested. I would need to generate and maintain a separate lock or constraints file to pin transitive dependencies.
 -   **Distroless:** I kept the Python slim image because it is simpler to inspect and troubleshoot for this small Flask and Gunicorn app.
 -   **A Python version upgrade:** I kept Python 3.12 and avoided changing the app's runtime version as part of this task.
--   **A Kubernetes manifest:** This part asks me to containerize the app. I will configure probes and resource requests in the Kubernetes deployment for Part 2.
+-   **A Kubernetes manifest:** This part asks to containerize the app. The Kubernetes deployment will be done later.
